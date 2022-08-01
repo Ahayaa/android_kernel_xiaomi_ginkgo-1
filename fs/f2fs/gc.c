@@ -153,9 +153,6 @@ do_gc:
 		gc_control.no_bg_gc = foreground;
 		gc_control.nr_free_secs = foreground ? 1 : 0;
 
-		/* foreground GC was been triggered via f2fs_balance_fs() */
-		if (foreground)
-			sync_mode = false;
 
 		/* if return value is not zero, no victim was selected */
 		if (f2fs_gc(sbi, &gc_control))
@@ -1871,9 +1868,6 @@ stop:
 
 	if (gc_type == FG_GC)
 		f2fs_unpin_all_sections(sbi, true);
-
-	if (gc_type == FG_GC && pinned_section_exists(DIRTY_I(sbi)))
-		unpin_all_sections(sbi);
 
 	trace_f2fs_gc_end(sbi->sb, ret, total_freed, sec_freed,
 				get_pages(sbi, F2FS_DIRTY_NODES),
